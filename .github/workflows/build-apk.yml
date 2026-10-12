@@ -22,6 +22,11 @@ jobs:
           java-version: 17
           cache: gradle
 
+      - name: Setup Gradle (Generates Wrapper)
+        uses: actions/setup-gradle@v4
+        with:
+          gradle-version: '8.4'
+
       - name: Accept Android SDK Licenses
         run: |
           yes | /usr/local/lib/android/sdk/cmdline-tools/latest/bin/sdkmanager --licenses
@@ -33,9 +38,6 @@ jobs:
             "build-tools;34.0.0" \
             "ndk;26.1.10909125" \
             "cmake;3.22.1"
-
-      - name: Make Gradle Wrapper Executable
-        run: chmod +x ./gradlew
 
       - name: Build Debug APK
         run: ./gradlew assembleDebug --no-daemon
