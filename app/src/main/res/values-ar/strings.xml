@@ -1,0 +1,12 @@
+﻿<resources>
+    <string name="app_name">El Pato</string>
+    <string name="detecting_location">جاري تحديد موقعك…</string>
+    <string name="nearest_branch">أقرب فرع لك</string>
+    <string name="branch_open">مفتوح الآن</string>
+    <string name="branch_closed">مغلق حالياً</string>
+    <string name="permission_location_title">إذن الموقع مطلوب</string>
+    <string name="permission_location_message">نحتاج لموقعك لنعرض لك أقرب فرع وأسعار التوصيل</string>
+    <string name="enable_location">تفعيل الموقع</string>
+    <string name="retry">إعادة المحاولة</string>
+    <string name="error_generic">حدث خطأ</string>
+</resources>

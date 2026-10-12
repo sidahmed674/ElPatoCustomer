@@ -1,0 +1,9 @@
+﻿package com.elpato.customer.di
+import android.content.Context; import com.elpato.customer.data.api.ApiService; import com.elpato.customer.data.repository.BranchRepositoryImpl; import com.elpato.customer.domain.repository.BranchRepository; import com.elpato.customer.domain.usecase.FindNearestBranchUseCase; import com.elpato.customer.domain.usecase.GetBranchesUseCase; import dagger.hilt.android.InstallIn; import dagger.hilt.android.components.SingletonComponent; import dagger.hilt.android.qualifiers.ApplicationContext; import dagger.hilt.android.scopes.ActivityRetainedScoped; import dagger.Module; import dagger.Provides; import okhttp3.OkHttpClient; import okhttp3.logging.HttpLoggingInterceptor; import retrofit2.Retrofit; import retrofit2.converter.moshi.MoshiConverterFactory; import javax.inject.Singleton
+@InstallIn(SingletonComponent::class) @Module object NetworkModule {
+    @Provides @Singleton fun provideOkHttp(@ApplicationContext ctx: Context) = OkHttpClient.Builder().addInterceptor(HttpLoggingInterceptor().apply{level=HttpLoggingInterceptor.Level.BODY}).build()
+    @Provides @Singleton fun provideRetrofit(client: OkHttpClient) = Retrofit.Builder().baseUrl("https://api.elpato.dz/").client(client).addConverterFactory(MoshiConverterFactory.create()).build()
+    @Provides @Singleton fun provideApi(retrofit: Retrofit) = retrofit.create(ApiService::class.java)
+}
+@InstallIn(SingletonComponent::class) @Module object RepoModule { @Provides @Singleton fun provideBranchRepo(api: ApiService): BranchRepository = BranchRepositoryImpl(api) }
+@InstallIn(ActivityRetainedScoped::class) @Module object UseCaseModule { @Provides fun provideFindNearest(repo: BranchRepository) = FindNearestBranchUseCase(repo); @Provides fun provideGetBranches(repo: BranchRepository) = GetBranchesUseCase(repo) }

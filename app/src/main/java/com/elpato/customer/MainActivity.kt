@@ -1,0 +1,3 @@
+﻿package com.elpato.customer
+import android.os.Bundle; import androidx.activity.ComponentActivity; import androidx.activity.compose.setContent; import androidx.hilt.navigation.compose.hiltViewModel; import com.elpato.customer.ui.theme.ElPatoTheme; import com.elpato.customer.presentation.navigation.AppNavHost; import dagger.hilt.android.AndroidEntryPoint
+@AndroidEntryPoint class MainActivity : ComponentActivity() { override fun onCreate(saved: Bundle?) { super.onCreate(saved); setContent { ElPatoTheme { androidx.compose.material3.Surface(androidx.compose.foundation.layout.Modifier.fillMaxSize(), color = androidx.compose.material3.MaterialTheme.colorScheme.surface) { val nav = androidx.navigation.compose.rememberNavController(); AppNavHost(nav) } } } } }

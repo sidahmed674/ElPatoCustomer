@@ -1,0 +1,11 @@
+﻿package com.elpato.customer.domain.model
+import com.google.android.gms.maps.model.LatLng
+import kotlinx.serialization.Serializable
+
+@Serializable data class GeoPoint(val type: String = "Point", val coordinates: DoubleArray) { fun toLatLng(): LatLng = LatLng(coordinates[1], coordinates[0]); companion object { fun fromLatLng(l: LatLng) = GeoPoint(coordinates = doubleArrayOf(l.longitude, l.latitude)) } }
+@Serializable data class GeoPolygon(val type: String = "Polygon", val coordinates: List<List<DoubleArray>>) { fun contains(p: LatLng): Boolean { val pts = coordinates[0].map { LatLng(it[1], it[0]) }; var inside = false; var j = pts.size - 1; for(i in pts.indices){ val pi=pts[i]; val pj=pts[j]; if((pi.latitude > p.latitude) != (pj.latitude > p.latitude) && p.longitude < (pj.longitude-pi.longitude)*(p.latitude-pi.latitude)/(pj.latitude-pi.latitude)+pi.longitude) inside=!inside; j=i }; return inside } }
+@Serializable data class OpeningHours(val open: String, val close: String, val is24Hours: Boolean = false)
+@Serializable data class DeliveryZone(val id: String, val branchId: String, val name: String, val nameAr: String, val polygon: GeoPolygon, val fee: Double, val estimatedMinutes: Int, val isActive: Boolean, val priority: Int)
+@Serializable data class Branch(val id: String, val name: String, val nameAr: String, val address: String, val addressAr: String, val phone: String?, val coordinates: GeoPoint, val isActive: Boolean, val isOpen: Boolean, val openingHours: OpeningHours, val imageUrl: String?, val deliveryZones: List<DeliveryZone>) { fun distanceTo(u: LatLng) = com.google.maps.android.SphericalUtil.computeDistanceBetween(com.google.maps.model.LatLng(coordinates.coordinates[1], coordinates.coordinates[0]), com.google.maps.model.LatLng(u.latitude, u.longitude)); fun getDeliveryFee(u: LatLng) = deliveryZones.filter{it.isActive}.filter{it.polygon.contains(u)}.minByOrNull{it.fee}?.let{DeliveryFeeResult.Success(it.fee, it.nameAr)} ?: DeliveryFeeResult.OutOfRange }
+sealed class DeliveryFeeResult { data class Success(val fee: Double, val zoneName: String): DeliveryFeeResult(); object OutOfRange: DeliveryFeeResult(); data class Error(val msg: String): DeliveryFeeResult() }
+@Serializable data class BranchWithFee(val branch: Branch, val deliveryFee: DeliveryFeeResult)
